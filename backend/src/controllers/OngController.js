@@ -36,7 +36,6 @@ module.exports = {
             })
             return res.json({ token: generateToken({ idToken: id }) });
         } catch (error) {
-            console.log(error);
             return res.status(400).send({ Error: "Registration Failed" })
         }
     }
