@@ -31,8 +31,28 @@ routes.post('/register_ongs', async (req, res) => {
         })
         return res.send({ token: generateToken({ idToken: id }) });
     } catch (error) {
+        console.log(error);
         return res.status(400).send({ Error: "Registration Failed" })
     }
 });
+
+routes.post('/authenticate', async (req, res) => {
+    const { email, password } = req.body;
+    const ong = await connection('ongs').
+        where('email', email).
+        select('password', 'email', 'id')
+        .first();
+    if (!ong) {
+        return res.status(400).send({ Error: "Ong Not Found" });
+    }
+    if (!await bcrypt.compare(password, ong.password)) {
+        return res.status(400).send({ Error: "Invalid Password" });
+    }
+    //  console.log(password, ong.password);
+    //;; if (!await bcrypt.compare(password, ong.password)) {
+    //     return res.status(400).send({ Error: "Invalid Password" });
+    // }
+    return res.send({ token: generateToken({ idToken: ong.id }) });
+})
 
 module.exports = routes;
