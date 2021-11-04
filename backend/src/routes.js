@@ -48,10 +48,6 @@ routes.post('/authenticate', async (req, res) => {
     if (!await bcrypt.compare(password, ong.password)) {
         return res.status(400).send({ Error: "Invalid Password" });
     }
-    //  console.log(password, ong.password);
-    //;; if (!await bcrypt.compare(password, ong.password)) {
-    //     return res.status(400).send({ Error: "Invalid Password" });
-    // }
     return res.send({ token: generateToken({ idToken: ong.id }) });
 })
 
