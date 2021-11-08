@@ -1,27 +1,49 @@
 const connection = require('../database/connection');
-//const express = require('express');
-//const routes = express.Router();
-//const authMiddleware = require('../middlewares/auth');
-//routes.use(authMiddleware);
 
 module.exports = {
 
-    async index(req, res,) {
+    async index(req, res) {
 
-        res.send();
+        const incidents = await connection('incidents').select('*');
+        return res.json(incidents);
     },
 
     async create(req, res) {
         const { title, description, value } = req.body;
+        const ong_id = req.headers.context;
         try {
-            await connection('incidents').insert({
+            const [id] = await connection('incidents').insert({
                 title,
                 description,
-                value
+                value,
+                ong_id
             })
+            return res.json({ id });
+        } catch (error) {
+            res.status(400).send({ error: "Registration Failed" })
+        }
+    },
+
+    async update(req, res) {
+
+    },
+
+    async delete(req, res) {
+        const { id } = req.params;
+        const ong_id = req.headers.context;
+        try {
+            const incident = await connection('incidents').where('id', id).select('ong_id').first();
+            if (!incident) {
+                return res.status(404).send({ error: "Incident not Found" })
+            }
+            if (incident.ong_id !== ong_id) {
+                return res.status(401).json({ Error: "Operation not permitted" });
+            }
+            await connection('incidents').where('id', id).delete();
+            return res.status(204).send();
         } catch (error) {
             console.log(error);
-            res.status(400).send({ error: "Registration Failed" })
+            return res.status(400).send({ error: "Delete Failed" });
         }
     }
 }

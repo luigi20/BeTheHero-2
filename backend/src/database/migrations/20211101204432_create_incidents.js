@@ -7,6 +7,8 @@ exports.up = function (knex) {
         table.decimal('value').notNullable();
         table.string('ong_id').notNullable();
         table.foreign('ong_id').references('id').inTable('ongs');
+        table.timestamp('created_at').defaultTo(knex.fn.now());
+        table.timestamp('updated_at').defaultTo(knex.fn.now());
     })
 };
 

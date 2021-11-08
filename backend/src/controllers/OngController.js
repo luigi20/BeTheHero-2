@@ -13,15 +13,19 @@ function generateToken(params = {}) {
 
 module.exports = {
     async index(req, res) {
-        const ongs = await connection('ongs').select('*');
-        return res.json(ongs);
+        try {
+            const ongs = await connection('ongs').select('*');
+            return res.json(ongs);
+        } catch (error) {
+            res.status(400).send({ Error: "ONG's Were Not Found" })
+        }
     },
 
     async create(req, res) {
         const { name, email, whatsapp, city, uf } = req.body;
         try {
             if (await connection('ongs').where('email', email).first()) {
-                return res.status(400).send({ Error: "Ong Already Exists" })
+                return res.status(400).send({ Error: "ONG Already Exists" })
             }
             const id = crypto.randomBytes(4).toString('HEX');
             const password = await bcrypt.hash(req.body.password, 10);
@@ -38,5 +42,13 @@ module.exports = {
         } catch (error) {
             return res.status(400).send({ Error: "Registration Failed" })
         }
+    },
+
+    async update(req, res) {
+
+    },
+
+    async delete(req, res) {
+
     }
 }
