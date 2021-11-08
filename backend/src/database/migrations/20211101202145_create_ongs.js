@@ -9,8 +9,8 @@ exports.up = function (knex) {
         table.string('city').notNullable();
         table.string('uf', 2).notNullable();
         table.string('password').notNullable();
-        table.timestamp('created_at').defaultTo(knex.fn.now());
-        table.timestamp('updated_at').defaultTo(knex.fn.now());
+        table.timestamp('created_at_ong').defaultTo(knex.fn.now());
+        table.timestamp('updated_at_ong').defaultTo(knex.fn.now());
         table.string('passwordResetToken');
         table.date('passwordResetExpires');
     })

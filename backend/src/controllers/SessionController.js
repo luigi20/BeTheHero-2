@@ -15,14 +15,15 @@ module.exports = {
         const { email, password } = req.body;
         const ong = await connection('ongs').
             where('email', email).
-            select('password', 'email', 'id')
+            select('password', 'id', 'name')
             .first();
+        const { name } = ong;
         if (!ong) {
             return res.status(400).send({ Error: "Ong Not Found" });
         }
         if (!await bcrypt.compare(password, ong.password)) {
             return res.status(400).send({ Error: "Invalid Password" });
         }
-        return res.json({ token: generateToken({ idToken: ong.id }) });
+        return res.json({ name, token: generateToken({ idToken: ong.id }) });
     }
 }
