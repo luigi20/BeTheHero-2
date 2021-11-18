@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 function generateToken(params = {}) {
     const token = jwt.sign(params, authconfig.secret, {
-        expiresIn: 86400,
+        expiresIn: 300,
     });
     return token;
 }
@@ -40,7 +40,7 @@ module.exports = {
             })
             return res.json({ token: generateToken({ idToken: id }) });
         } catch (error) {
-            return res.status(400).send({ Error: "Registration Failed" })
+            return res.status(400).json({ Error: "Registration Failed" })
         }
     },
 

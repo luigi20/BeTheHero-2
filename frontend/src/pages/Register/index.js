@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { FiArrowLeft } from 'react-icons/fi';
 import './styles.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logoImg from '../../assets/logo.svg';
 import api from '../../services/api';
 
 export default function Register() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [uf, setUf] = useState('');
-    const [whatsapp, setWhatsapp] = useState('');
-    const [city, setCity] = useState('');
+    const [name, setName] = useState();
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [uf, setUf] = useState();
+    const [whatsapp, setWhatsapp] = useState();
+    const [city, setCity] = useState();
 
+    const navigate = useNavigate();
 
     async function handleRegister(e) {
         e.preventDefault();
-        const data = {
+        const dataOng = {
             name,
             email,
             password,
@@ -25,11 +26,14 @@ export default function Register() {
             uf
         };
         try {
-            const response = await api.post('/register_ongs', data);
-            console.log(response.data);
+            await api.post('/register_ongs', dataOng);
             alert("Cadastro Realizado Com Sucesso.");
+            navigate('/');
         } catch (error) {
-            alert("Falha no Cadastro. Tente Novamente.");
+            for (const status in error.response.data) {
+                alert(status + ': ' + error.response.data[status]);
+            }
+
         }
     }
 

@@ -1,21 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FiLogIn } from 'react-icons/fi';
 import './styles.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logoImg from '../../assets/logo.svg';
 import heroesImg from '../../assets/heroes.png';
-
+import api from '../../services/api';
 
 export default function Logon() {
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const navigate = useNavigate();
+
+    async function handleLogon(e) {
+        e.preventDefault();
+        try {
+            const response = await api.post('authenticate', { email, password });
+            localStorage.setItem('ongName', response.data.ongName);
+            localStorage.setItem('token', response.data.token);
+            navigate('/profile');
+        } catch (error) {
+            for (const status in error.response.data) {
+                alert(status + ': ' + error.response.data[status]);
+            }
+        }
+    }
     return (
         <div className="logon-container">
             <section className="form">
                 <img src={logoImg} alt="Be the Hero" />
-                <form>
+                <form onSubmit={handleLogon}>
                     <h1>Faça seu logon</h1>
 
-                    <input placeholder="Seu Email" />
-                    <input placeholder="Sua Senha" />
+                    <input placeholder="Seu Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)} />
+                    <input placeholder="Sua Senha" type="password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)} />
 
                     <button className="button" type="submit"> Entrar </button>
 
