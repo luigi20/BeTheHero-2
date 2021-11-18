@@ -1,4 +1,4 @@
-const { default: knex } = require("knex");
+
 
 exports.up = function (knex) {
     return knex.schema.createTable('ongs', function (table) {
