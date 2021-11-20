@@ -23,8 +23,12 @@ module.exports = {
 
     async create(req, res) {
         const { title, description, value } = req.body;
-        const ong_id = req.headers.context;
+        let ong_id = req.headers.context;
+        let ong = token(req.headers.authorization, ong_id);
         try {
+            if (!ong) {
+                return res.status(404).send({ Error: "You are not authorized to access this application." });
+            }
             const [id] = await connection('incidents').insert({
                 title,
                 description,
@@ -44,7 +48,12 @@ module.exports = {
     async delete(req, res) {
         const { id } = req.params;
         const ong_id = req.headers.context;
+        let ong = token(req.headers.authorization, ong_id);
+
         try {
+            if (!ong) {
+                return res.status(404).send({ Error: "You are not authorized to access this application." });
+            }
             const incident = await connection('incidents').where('id', id).select('ong_id').first();
             if (!incident) {
                 return res.status(404).send({ error: "Incident not Found" })
@@ -55,8 +64,15 @@ module.exports = {
             await connection('incidents').where('id', id).delete();
             return res.status(204).send();
         } catch (error) {
-            console.log(error);
             return res.status(400).send({ error: "Delete Failed" });
         }
-    }
+    },
+
+
+}
+
+async function token(token, ong_id) {
+    const ong = await connection('ongs').
+        where('token', '=', token).where('id', '=', ong_id);
+    return ong;
 }

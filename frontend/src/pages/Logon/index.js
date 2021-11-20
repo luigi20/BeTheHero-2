@@ -15,8 +15,9 @@ export default function Logon() {
         e.preventDefault();
         try {
             const response = await api.post('authenticate', { email, password });
-            localStorage.setItem('ongName', response.data.ongName);
+            localStorage.setItem('ongName', response.data.name);
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('id', response.data.id);
             navigate('/profile');
         } catch (error) {
             for (const status in error.response.data) {

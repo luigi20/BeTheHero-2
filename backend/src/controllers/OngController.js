@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 function generateToken(params = {}) {
     const token = jwt.sign(params, authconfig.secret, {
-        expiresIn: 300,
+        expiresIn: 86400,
     });
     return token;
 }
