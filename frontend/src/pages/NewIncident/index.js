@@ -29,7 +29,9 @@ export default function NewIncident() {
             })
             navigate('/profile');
         } catch (error) {
-            alert('Erro ao Cadastrar');
+            for (const status in error.response.data) {
+                alert(status + ': ' + error.response.data[status]);
+            }
         }
     }
     return (
