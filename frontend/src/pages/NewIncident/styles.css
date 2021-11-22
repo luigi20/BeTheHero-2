@@ -57,6 +57,13 @@
     margin-top:8px;
 }
 
+#uf{ 
+    margin-top:8px;
+}
+.new-incident .content form select{
+    margin-top:8px;
+}
+
 .new-incident .content form .input-group{
     display:flex;
 }

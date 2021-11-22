@@ -45,7 +45,9 @@ module.exports = {
         const { id } = req.params;
         const ong_id = req.headers.context;
         const { title, description, value } = req.body;
-        const incidentUpdate = [title, description, value];
+        const data = new Date();
+        const str_data = data.getFullYear() + '-' + (data.getMonth() + 1) + '-' + data.getDate();
+        const str_hora = data.getHours() + ':' + data.getMinutes() + ':' + data.getSeconds();
         let ong = token(req.headers.authorization, ong_id);
         try {
             if (!ong) {
@@ -60,13 +62,12 @@ module.exports = {
             }
 
             await connection('incidents').update({
-                title: title,
-                description: description,
-                value: value
+                'title': title,
+                'description': description,
+                'value': value,
+                'updated_at_incident': str_data + ' ' + str_hora,
 
             }).where('id', id);
-
-
             return res.status(204).send();
         } catch (error) {
             console.log(error);

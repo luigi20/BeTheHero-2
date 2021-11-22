@@ -72,7 +72,7 @@ export default function NewIncident() {
                 <form onSubmit={handleSubmit(handleIncident)}>
                     <input placeholder="Titulo do Caso" {...register('title', { required: true })} />
                     <textarea placeholder="Descrição" {...register('description', { required: true })} />
-                    <input placeholder="Valor em Reais" {...register('value', { required: true })} />
+                    <input type="number" min="1" step="any" placeholder="Valor em Reais" {...register('value', { required: true })} />
                     <button className="button" type="submit">Cadastrar</button>
                 </form>
             </div>
