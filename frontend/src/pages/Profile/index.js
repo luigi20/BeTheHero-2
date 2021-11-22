@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import logoImg from '../../assets/logo.svg';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiPower, FiTrash2 } from 'react-icons/fi';
+import { FiPower, FiTrash2, FiEdit2 } from 'react-icons/fi';
 import './styles.css';
 import api from '../../services/api';
 
-export default function Profile() {
+export default function Profile(props) {
     const ongName = localStorage.getItem('ongName');
     const ongId = localStorage.getItem('id');
     const token = localStorage.getItem('token');
@@ -26,7 +26,9 @@ export default function Profile() {
         localStorage.clear();
         navigate('/');
     }
-
+    async function handleUpdateIncident(incidentId) {
+        navigate('/incidents/update/' + incidentId);
+    }
     async function handleDeleteIncident(id) {
         try {
             await api.delete(`delete_incidents/${id}`, {
@@ -66,15 +68,20 @@ export default function Profile() {
                         <p> {incident.description}</p>
                         <strong>Valor</strong>
                         <p> {Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(incident.value)}</p>
+                        <button onClick={() => handleUpdateIncident(incident.id)} id={'update'} type="button">
+                            <FiEdit2 size={20} color="#A8A8B3" />
 
-                        <button onClick={() => handleDeleteIncident(incident.id)} type="button">
+                        </button>
+
+                        <button onClick={() => handleDeleteIncident(incident.id)} type="button" id={'delete'}>
                             <FiTrash2 size={20} color="#A8A8B3" />
+
                         </button>
                     </li>
                 ))}
             </ul>
 
 
-        </div>
+        </div >
     );
 }

@@ -42,14 +42,42 @@ module.exports = {
     },
 
     async update(req, res) {
+        const { id } = req.params;
+        const ong_id = req.headers.context;
+        const { title, description, value } = req.body;
+        const incidentUpdate = [title, description, value];
+        let ong = token(req.headers.authorization, ong_id);
+        try {
+            if (!ong) {
+                return res.status(404).send({ Error: "You are not authorized to access this application." });
+            }
+            const incident = await connection('incidents').where('id', id).select('ong_id').first();
+            if (!incident) {
+                return res.status(404).send({ error: "Incident not Found" })
+            }
+            if (incident.ong_id !== ong_id) {
+                return res.status(401).json({ Error: "Operation not permitted" });
+            }
 
+            await connection('incidents').update({
+                title: title,
+                description: description,
+                value: value
+
+            }).where('id', id);
+
+
+            return res.status(204).send();
+        } catch (error) {
+            console.log(error);
+            return res.status(400).send({ error: "Update Failed" });
+        }
     },
 
     async delete(req, res) {
         const { id } = req.params;
         const ong_id = req.headers.context;
         let ong = token(req.headers.authorization, ong_id);
-
         try {
             if (!ong) {
                 return res.status(404).send({ Error: "You are not authorized to access this application." });
@@ -66,9 +94,7 @@ module.exports = {
         } catch (error) {
             return res.status(400).send({ error: "Delete Failed" });
         }
-    },
-
-
+    }
 }
 
 async function token(token, ong_id) {

@@ -17,9 +17,10 @@ routes.use(authMiddleware);
 routes.get('/ongs', OngController.index);
 
 routes.get('/profile', ProfileController.index);
+routes.get('/profile/:id', ProfileController.findById);
 
 routes.post('/register_incidents', IncidentController.create);
 routes.get('/incidents', IncidentController.index);
 routes.delete('/delete_incidents/:id', IncidentController.delete);
-
+routes.put('/update_incidents/:id', IncidentController.update);
 module.exports = routes;

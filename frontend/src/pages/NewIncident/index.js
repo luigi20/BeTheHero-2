@@ -1,32 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import './styles.css';
 import logoImg from '../../assets/logo.svg';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import api from '../../services/api';
+import { useForm } from "react-hook-form";
 
 export default function NewIncident() {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [value, setValue] = useState('');
+
     const ongId = localStorage.getItem('id');
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
+    const incidents = useParams();
 
-    async function handleNewIncident(e) {
-        e.preventDefault();
-        const data = {
-            title,
-            description,
-            value,
-        }
-        try {
-            await api.post('register_incidents', data, {
+    const { register, handleSubmit, errors, reset } = useForm({
+        defaultValues: { title: "", description: "", value: "" },
+    });
+    useEffect(() => {
+        if (incidents) {
+            api.get(`/profile/${incidents.idIncidents}`, {
                 headers: {
                     Authorization: token,
-                    context: ongId
+                    Context: ongId
                 }
+            }).then(response => {
+                reset(response.data);
             })
+        }
+
+    }, [reset]);
+
+    async function handleIncident({ title, description, value }, e) {
+        e.preventDefault();
+        const data = { title, description, value };
+        try {
+            if (incidents.idIncidents) {
+                await api.put(`update_incidents/${incidents.idIncidents}`, data, {
+                    headers: {
+                        Authorization: token,
+                        context: ongId
+                    }
+                })
+            } else {
+                await api.post('register_incidents', data, {
+                    headers: {
+                        Authorization: token,
+                        context: ongId
+                    }
+                })
+            }
             navigate('/profile');
         } catch (error) {
             for (const status in error.response.data) {
@@ -34,6 +56,7 @@ export default function NewIncident() {
             }
         }
     }
+
     return (
         <div className="new-incident">
             <div className="content">
@@ -46,17 +69,13 @@ export default function NewIncident() {
                         Voltar para a Home
                     </Link>
                 </section>
-                <form onSubmit={handleNewIncident}>
-                    <input placeholder="Titulo do Caso"
-                        value={title} onChange={e => setTitle(e.target.value)} />
-                    <textarea placeholder="Descrição"
-                        value={description} onChange={e => setDescription(e.target.value)} />
-                    <input placeholder="Valor em Reais"
-                        value={value} onChange={e => setValue(e.target.value)} />
-
+                <form onSubmit={handleSubmit(handleIncident)}>
+                    <input placeholder="Titulo do Caso" {...register('title', { required: true })} />
+                    <textarea placeholder="Descrição" {...register('description', { required: true })} />
+                    <input placeholder="Valor em Reais" {...register('value', { required: true })} />
                     <button className="button" type="submit">Cadastrar</button>
                 </form>
             </div>
-        </div>
+        </div >
     );
 }

@@ -13,5 +13,20 @@ module.exports = {
         } catch (error) {
             return res.status(400).send({ Error: "ONG Has No Recorded Incidents" })
         }
+    },
+
+    async findById(req, res) {
+        try {
+            const { id } = req.params;
+            const incidents = await connection('incidents').where('id', id).select('*').first();
+            if (!incidents) {
+                return res.status(400).send({ Error: "Incidents Not Found" });
+            }
+            return res.json(incidents);
+        } catch (error) {
+            return res.status(400).send({ Error: "ONG Has No Recorded Incidents" })
+        }
     }
+
+
 }
