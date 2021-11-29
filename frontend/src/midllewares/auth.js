@@ -1,16 +1,15 @@
 export const isAuthenticated = (authHeader) => {
     let isAuthenticated = false;
     if (!authHeader) {
-
         return acessApp();
     }
     const parts = authHeader.split(' ');
     if (!parts.length === 2) {
         return acessApp();;
     }
-    const [scheme, token] = parts;
+    const [scheme] = parts;
     if (!/^Bearer$/i.test(scheme)) {
-        return acessApp();;
+        return acessApp();
     }
     isAuthenticated = true;
     return isAuthenticated;

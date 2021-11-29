@@ -12,12 +12,11 @@ export default function NewIncident() {
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
     const incidents = useParams();
-
     const { register, handleSubmit, errors, reset } = useForm({
         defaultValues: { title: "", description: "", value: "" },
     });
     useEffect(() => {
-        if (incidents) {
+        if (incidents.idIncidents) {
             api.get(`/profile/${incidents.idIncidents}`, {
                 headers: {
                     Authorization: token,
